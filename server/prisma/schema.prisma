@@ -1,0 +1,325 @@
+// Smart Pantry Manager — data model
+// Every user-owned table carries userId so each query can be scoped to its owner.
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UsageType {
+  CONSUMED
+  WASTED
+}
+
+enum WasteReason {
+  EXPIRED
+  SPOILED
+  LEFTOVER
+  OVERBOUGHT
+  DAMAGED
+  OTHER
+}
+
+enum ShoppingStatus {
+  PENDING
+  PURCHASED
+}
+
+enum NotificationType {
+  EXPIRING
+  EXPIRED
+  LOW_STOCK
+  RUNNING_OUT
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  // Bumped on password change/reset so every older login token stops working
+  tokenVersion Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  settings      Settings?
+  categories    Category[]
+  locations     Location[]
+  items         Item[]
+  usageEvents   UsageEvent[]
+  activities    Activity[]
+  notifications Notification[]
+  shoppingItems ShoppingItem[]
+  images        ItemImage[]
+  resetTokens   PasswordResetToken[]
+  achievements  Achievement[]
+  household     Household?
+  membership    HouseholdMember?
+  pushSubs      PushSubscription[]
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Settings {
+  userId          String  @id
+  warningDays     Int     @default(7)
+  timezone        String  @default("Asia/Kolkata")
+  currency        String  @default("INR")
+  notifyExpiring  Boolean @default(true)
+  notifyLowStock  Boolean @default(true)
+  notifyRunOut    Boolean @default(true)
+  emailReminders  Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id                  String   @id @default(uuid())
+  userId              String
+  name                String
+  // Default shelf life once a package is opened (e.g. dairy = 5 days)
+  openedShelfLifeDays Int?
+  createdAt           DateTime @default(now())
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items Item[]
+
+  @@unique([userId, name])
+}
+
+model Location {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  createdAt DateTime @default(now())
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items Item[]
+
+  @@unique([userId, name])
+}
+
+model Item {
+  id                  String    @id @default(uuid())
+  userId              String
+  name                String
+  brand               String?
+  categoryId          String
+  locationId          String
+  unit                String
+  minStock            Decimal   @default(0) @db.Decimal(12, 3)
+  // Item-level override of the category's opened shelf life
+  openedShelfLifeDays Int?
+  // True for foods that genuinely have no expiry (salt, sugar). Never inferred.
+  noExpiry            Boolean   @default(false)
+  barcode             String?
+  notes               String?
+  imageId             String?   @unique
+  isDemo              Boolean   @default(false)
+  deletedAt           DateTime?
+  // Optimistic concurrency: an edit must send the version it read
+  version             Int       @default(1)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category     @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  location Location     @relation(fields: [locationId], references: [id], onDelete: Restrict)
+  image    ItemImage?   @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  batches  Batch[]
+  usage    UsageEvent[]
+
+  @@index([userId, deletedAt])
+}
+
+// One purchase of an item. Stock = sum of batch quantities; FEFO consumes the earliest expiry first.
+model Batch {
+  id              String    @id @default(uuid())
+  itemId          String
+  quantity        Decimal   @db.Decimal(12, 3)
+  initialQuantity Decimal   @db.Decimal(12, 3)
+  purchaseDate    DateTime? @db.Date
+  expiryDate      DateTime? @db.Date
+  openedAt        DateTime? @db.Date
+  cost            Decimal?  @db.Decimal(12, 2)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+}
+
+model UsageEvent {
+  id            String       @id @default(uuid())
+  userId        String
+  itemId        String?
+  // Snapshot so history survives item deletion
+  itemName      String
+  categoryName  String
+  type          UsageType
+  quantity      Decimal      @db.Decimal(12, 3)
+  unit          String
+  reason        WasteReason?
+  estimatedCost Decimal?     @db.Decimal(12, 2)
+  // True when the food was used while it was "expiring soon" — it was rescued from the bin
+  rescued       Boolean      @default(false)
+  note          String?
+  isDemo        Boolean      @default(false)
+  occurredAt    DateTime     @default(now())
+  createdAt     DateTime     @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item Item? @relation(fields: [itemId], references: [id], onDelete: SetNull)
+
+  @@index([userId, occurredAt])
+  @@index([itemId])
+}
+
+model Activity {
+  id         String   @id @default(uuid())
+  userId     String
+  action     String
+  entityType String
+  entityId   String?
+  message    String
+  // Name of the household member who did it, when it wasn't the pantry owner
+  actorName  String?
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Notification {
+  id          String           @id @default(uuid())
+  userId      String
+  type        NotificationType
+  title       String
+  message     String
+  itemId      String?
+  // Prevents the same alert being created twice
+  dedupeKey   String
+  readAt      DateTime?
+  // Set when the user deletes an alert; the row stays so the same alert is never re-created
+  dismissedAt DateTime?
+  // When this alert was sent as a phone/browser push (null = not yet)
+  pushedAt    DateTime?
+  // NOT_REQUESTED | SENT | FAILED — only SENT after the mail server accepted it
+  emailStatus String           @default("NOT_REQUESTED")
+  createdAt   DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dedupeKey])
+  @@index([userId, createdAt])
+}
+
+model ShoppingItem {
+  id          String         @id @default(uuid())
+  userId      String
+  name        String
+  quantity    Decimal        @db.Decimal(12, 3)
+  unit        String
+  itemId      String?
+  note        String?
+  status      ShoppingStatus @default(PENDING)
+  purchasedAt DateTime?
+  addedToPantry Boolean      @default(false)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+}
+
+// Images live in the database so they survive redeploys on hosts with temporary disks.
+model ItemImage {
+  id        String   @id @default(uuid())
+  userId    String
+  mimeType  String
+  data      Bytes
+  createdAt DateTime @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item Item?
+}
+
+// A badge the user has earned. Points, levels and streaks are calculated from real activity;
+// only badges are stored, so they stay earned and can be celebrated once (seenAt).
+model Achievement {
+  id       String    @id @default(uuid())
+  userId   String
+  key      String
+  earnedAt DateTime  @default(now())
+  seenAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, key])
+}
+
+// Family sharing: the owner's pantry is shared with members. Each user owns at most one household
+// and can be a member of at most one other household.
+model Household {
+  id         String   @id @default(uuid())
+  name       String
+  ownerId    String   @unique
+  inviteCode String   @unique
+  createdAt  DateTime @default(now())
+
+  owner   User              @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members HouseholdMember[]
+}
+
+model HouseholdMember {
+  id          String   @id @default(uuid())
+  householdId String
+  userId      String   @unique
+  // EDITOR can change the pantry; VIEWER can only look
+  role        String   @default("EDITOR")
+  joinedAt    DateTime @default(now())
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([householdId])
+}
+
+// One row per browser/phone that turned on push notifications
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Server-generated settings that must survive restarts (e.g. push notification keys)
+model AppConfig {
+  key   String @id
+  value String
+}

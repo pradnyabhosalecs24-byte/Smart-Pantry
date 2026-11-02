@@ -1,0 +1,26 @@
+# Render Blueprint for the API (https://render.com/docs/blueprint-spec)
+# The database is hosted on Neon (free PostgreSQL); paste its connection string as DATABASE_URL.
+services:
+  - type: web
+    name: smart-pantry-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npx prisma migrate deploy && node dist/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # set in the Render dashboard (Neon connection string)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_URL
+        sync: false # e.g. https://smart-pantry.vercel.app
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false

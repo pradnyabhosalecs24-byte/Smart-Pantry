@@ -1,0 +1,260 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Design tokens. Named after the kitchen: oat (background), basil (action), bay leaf (deep accent),
+   chilli (expired), turmeric (expiring), plum (low stock). Status is never shown by colour alone. */
+:root {
+  --oat: #f6f3ea;
+  --surface: #ffffff;
+  --surface-2: #fbfaf5;
+  --line: #e4dfd1;
+  --line-strong: #cfc8b6;
+  --ink: #1f2a24;
+  --ink-2: #56625b;
+  --ink-3: #7d877f;
+  --basil: #2f7d4f;
+  --basil-hover: #276a43;
+  --basil-soft: #e2f0e6;
+  --bay: #1e4d33;
+  --chilli: #b42318;
+  --chilli-soft: #fdecea;
+  --turmeric: #94600c;
+  --turmeric-bar: #d99a1e;
+  --turmeric-soft: #fbf0d6;
+  --plum: #5d46c2;
+  --plum-soft: #eeeafb;
+  --slate: #56626e;
+  --slate-soft: #edf0f3;
+  /* Chart series: validated categorical slots (CVD-safe), used in fixed order */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  color-scheme: light;
+}
+
+.dark {
+  --oat: #111713;
+  --surface: #18201b;
+  --surface-2: #1d2621;
+  --line: #2b3630;
+  --line-strong: #3b4841;
+  --ink: #e6ece8;
+  --ink-2: #a8b4ad;
+  --ink-3: #85918a;
+  --basil: #55b07a;
+  --basil-hover: #66c08a;
+  --basil-soft: #1d3527;
+  --bay: #a6d8b8;
+  --chilli: #f2867a;
+  --chilli-soft: #3b201d;
+  --turmeric: #e8b752;
+  --turmeric-bar: #e8b752;
+  --turmeric-soft: #3a2f16;
+  --plum: #ad9cf2;
+  --plum-soft: #2a2546;
+  --slate: #a0acb8;
+  --slate-soft: #252f38;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  color-scheme: dark;
+}
+
+@theme {
+  --font-display: "Bricolage Grotesque", "Noto Sans Devanagari", "Noto Sans Kannada", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Figtree", "Noto Sans Devanagari", "Noto Sans Kannada", ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+
+  --color-oat: var(--oat);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-basil: var(--basil);
+  --color-basil-hover: var(--basil-hover);
+  --color-basil-soft: var(--basil-soft);
+  --color-bay: var(--bay);
+  --color-chilli: var(--chilli);
+  --color-chilli-soft: var(--chilli-soft);
+  --color-turmeric: var(--turmeric);
+  --color-turmeric-bar: var(--turmeric-bar);
+  --color-turmeric-soft: var(--turmeric-soft);
+  --color-plum: var(--plum);
+  --color-plum-soft: var(--plum-soft);
+  --color-slate: var(--slate);
+  --color-slate-soft: var(--slate-soft);
+}
+
+html,
+body {
+  background: var(--oat);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--basil);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dialog entrance: the one bit of motion, and it answers a user action */
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.sheet-in {
+  animation: sheet-in 160ms ease-out;
+}
+
+/* Recharts text follows the theme */
+.recharts-text {
+  fill: var(--ink-2);
+  font-size: 12px;
+}
+.recharts-cartesian-grid line {
+  stroke: var(--line);
+}
+
+/* ---------- Cook-along scenes (CookScene.tsx) ---------- */
+.cs-lick, .cs-bubble, .cs-steam, .cs-hop, .cs-pop, .cs-chop, .cs-grate, .cs-fall, .cs-stir, .cs-swirl,
+.cs-press, .cs-squish, .cs-roll, .cs-glow, .cs-spin, .cs-ripple, .cs-drop, .cs-twinkle, .cs-lid, .cs-shake {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.cs-lick { animation: cs-lick 0.6s ease-in-out infinite alternate; transform-origin: bottom; }
+.cs-flame-sm .cs-lick { animation-duration: 0.9s; }
+.cs-bubble { animation: cs-bubble 1.4s ease-in infinite; }
+.cs-bubble.cs-slow { animation-duration: 2.6s; }
+.cs-steam { animation: cs-steam 2.4s ease-out infinite; opacity: 0; }
+.cs-hop { animation: cs-hop 0.7s ease-in-out infinite alternate; }
+.cs-pop { animation: cs-pop 0.8s ease-out infinite; }
+.cs-chop { animation: cs-chop 0.55s ease-in-out infinite; transform-origin: 50% 0%; }
+.cs-grate { animation: cs-grate 0.6s ease-in-out infinite alternate; }
+.cs-fall { animation: cs-fall 1.2s ease-in infinite; }
+.cs-stir { animation: cs-stir 1.6s linear infinite; transform-box: view-box; transform-origin: 160px 116px; }
+.cs-swirl { animation: cs-pulse 1.6s ease-in-out infinite; }
+.cs-press { animation: cs-press 0.8s ease-in-out infinite alternate; }
+.cs-squish { animation: cs-squish 0.8s ease-in-out infinite alternate; }
+.cs-roll { animation: cs-roll 1.6s ease-in-out infinite alternate; }
+.cs-glow { animation: cs-glow 1.8s ease-in-out infinite alternate; }
+.cs-spin { animation: cs-spin 0.6s linear infinite; transform-box: view-box; }
+.cs-spin.cs-slow { animation-duration: 6s; }
+.cs-ripple { animation: cs-ripple 2.1s ease-out infinite; }
+.cs-drop { animation: cs-drop 1s ease-in infinite; }
+.cs-twinkle { animation: cs-twinkle 1.4s ease-in-out infinite alternate; }
+.cs-lid { animation: cs-lid 0.9s ease-in-out infinite alternate; }
+.cs-shake { animation: cs-shake 1.4s ease-in-out infinite; }
+
+@keyframes cs-lick { from { transform: scaleY(0.75); } to { transform: scaleY(1.15); } }
+@keyframes cs-bubble { 0% { transform: translateY(0) scale(0.6); opacity: 0; } 30% { opacity: 0.9; } 100% { transform: translateY(-42px) scale(1); opacity: 0; } }
+@keyframes cs-steam { 0% { transform: translateY(8px); opacity: 0; } 40% { opacity: 0.55; } 100% { transform: translateY(-22px); opacity: 0; } }
+@keyframes cs-hop { from { transform: translateY(0) rotate(-8deg); } to { transform: translateY(-16px) rotate(10deg); } }
+@keyframes cs-pop { 0% { transform: translateY(0) scale(1); } 40% { transform: translateY(-22px) scale(1.3); } 100% { transform: translateY(0) scale(1); } }
+@keyframes cs-chop { 0%, 100% { transform: translateY(-14px) rotate(-6deg); } 50% { transform: translateY(6px) rotate(0); } }
+@keyframes cs-grate { from { transform: translateY(0); } to { transform: translateY(70px); } }
+@keyframes cs-fall { 0% { transform: translateY(-12px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(18px); opacity: 0; } }
+@keyframes cs-stir { to { transform: rotate(360deg); } }
+@keyframes cs-pulse { from { opacity: 0.2; } to { opacity: 0.8; } }
+@keyframes cs-press { from { transform: translateY(-10px); } to { transform: translateY(8px); } }
+@keyframes cs-squish { from { transform: scale(1, 1); } to { transform: scale(1.12, 0.82); } }
+@keyframes cs-roll { from { transform: translateX(-34px); } to { transform: translateX(34px); } }
+@keyframes cs-glow { from { opacity: 0.25; } to { opacity: 0.85; } }
+@keyframes cs-spin { to { transform: rotate(360deg); } }
+@keyframes cs-ripple { from { transform: scale(0.4); opacity: 0.9; } to { transform: scale(3); opacity: 0; } }
+@keyframes cs-drop { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(38px); opacity: 0; } }
+@keyframes cs-twinkle { from { transform: scale(0.6); opacity: 0.4; } to { transform: scale(1.15); opacity: 1; } }
+@keyframes cs-lid { from { transform: translateY(0) rotate(-1.5deg); } to { transform: translateY(-4px) rotate(1.5deg); } }
+@keyframes cs-shake { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(6px); } }
+
+/* Step change in the cook-along: the new scene and text fade in */
+@keyframes step-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+.step-in { animation: step-in 220ms ease-out; }
+
+/* Recipe cards animate only on hover/focus, so a grid of them stays calm */
+.scene-paused * { animation-play-state: paused !important; }
+.group:hover .scene-paused *, .group:focus-visible .scene-paused * { animation-play-state: running !important; }
+
+/* ---------- Gamification: medals, flip cards, flame, pops ---------- */
+.medal-stage { perspective: 600px; }
+.medal { position: relative; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(.2,.8,.2,1); }
+.group:hover .medal:not(.medal-locked), .medal-spin { transform: rotateY(360deg); }
+.medal-spin { animation: medal-spin 2.4s cubic-bezier(.2,.8,.2,1) 1; }
+.medal-face {
+  position: absolute; inset: 0; border-radius: 9999px; backface-visibility: hidden; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 0 0 3px rgba(255,255,255,.35), inset 0 -6px 12px rgba(0,0,0,.18), 0 6px 14px rgba(0,0,0,.18);
+}
+.medal-back { transform: rotateY(180deg); }
+.medal-inner {
+  width: 72%; height: 72%; border-radius: 9999px; display: flex; align-items: center; justify-content: center;
+  color: rgba(40,25,5,.78); background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), rgba(255,255,255,.08) 60%);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.2);
+}
+.medal-locked .medal-inner { color: rgba(40,40,40,.55); }
+.medal-shine {
+  position: absolute; inset: -40%; background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.65) 50%, transparent 60%);
+  animation: medal-shine 3.6s ease-in-out infinite;
+}
+@keyframes medal-spin { from { transform: rotateY(0) scale(.6); } 60% { transform: rotateY(540deg) scale(1.08); } to { transform: rotateY(720deg) scale(1); } }
+@keyframes medal-shine { 0%, 60% { transform: translateX(-60%); } 100% { transform: translateX(60%); } }
+
+.flip-card { perspective: 900px; }
+.flip-inner { position: relative; height: 100%; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.2,.8,.2,1); }
+.flip-card.is-flipped .flip-inner { transform: rotateY(180deg); }
+@media (hover: hover) { .flip-card:hover .flip-inner { transform: rotateY(180deg); } }
+.flip-face { position: absolute; inset: 0; backface-visibility: hidden; }
+.flip-back { transform: rotateY(180deg); }
+
+.flame-alive .flame-outer { transform-origin: 50% 100%; animation: flame 0.9s ease-in-out infinite alternate; }
+.flame-alive .flame-inner { transform-origin: 50% 100%; animation: flame 0.6s ease-in-out infinite alternate-reverse; }
+@keyframes flame { from { transform: scale(1, 1) skewX(-2deg); } to { transform: scale(.94, 1.08) skewX(3deg); } }
+
+/* "+10 pts" pop that floats up from the level chip */
+.xp-pop { animation: xp-pop 1.6s cubic-bezier(.2,.8,.2,1) forwards; }
+@keyframes xp-pop { 0% { opacity: 0; transform: translateY(6px) scale(.8); } 15% { opacity: 1; transform: translateY(0) scale(1.08); } 70% { opacity: 1; } 100% { opacity: 0; transform: translateY(-26px) scale(1); } }
+
+/* Welcome page: elements rise into place once, as they scroll into view */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease-out, transform .7s cubic-bezier(.2,.8,.2,1); }
+.reveal.in-view { opacity: 1; transform: none; }
+.hero-word { display: inline-block; opacity: 0; transform: translateY(0.4em) rotateX(-40deg); animation: hero-word .8s cubic-bezier(.2,.8,.2,1) forwards; }
+@keyframes hero-word { to { opacity: 1; transform: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+  .hero-word { opacity: 1; transform: none; }
+  .group:hover .medal:not(.medal-locked) { transform: none; }
+}
+
+/* Celebration card: a bar that empties while it's on screen */
+.celebrate-timer { animation: celebrate-timer 7s linear forwards; transform-origin: left; }
+@keyframes celebrate-timer { from { transform: scaleX(1); } to { transform: scaleX(0); } }
