@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart Pantry Manager — Pradnya Bhosale</title>
+<meta name="description" content="Smart Pantry Manager: a smart food inventory and waste reduction system by Pradnya Bhosale. Track food batch by batch, get alerts before it expires, cook with what's left, and watch waste go down." />
+<meta property="og:title" content="Smart Pantry Manager" />
+<meta property="og:description" content="Smart food inventory & waste reduction — by Pradnya Bhosale" />
+<meta property="og:image" content="img/poster.jpg" />
+<link rel="icon" href="favicon.svg" />
+<style>
+  :root {
+    --forest: #1f5b3a; --basil: #2f7d4f; --mint: #e3f1e7; --turmeric: #b97c0f; --ink: #1e2a23; --ink2: #56635b;
+    --line: #dce5de; --bg: #ffffff; --soft: #f4f8f5; --card: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #e8efe9; --ink2: #a9b8ae; --line: #2b3630; --bg: #111713; --soft: #18201b; --card: #18201b; --mint: #213628; --basil: #4fae74; --turmeric: #e8b752; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif; }
+  a { color: var(--basil); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  header.hero { background: #1f5b3a; color: #fff; padding: 64px 0 72px; }
+  .hero .wrap { display: grid; gap: 40px; grid-template-columns: 1fr 1.1fr; align-items: center; }
+  .eyebrow { font-size: 13px; letter-spacing: .18em; font-weight: 700; color: #bfd8c7; text-transform: uppercase; }
+  h1 { font-size: clamp(36px, 6vw, 58px); line-height: 1.05; margin: 12px 0 14px; letter-spacing: -.02em; }
+  .hero p { color: #e3f1e7; font-size: 19px; margin: 0 0 26px; max-width: 34em; }
+  .by { margin-top: 26px; color: #bfd8c7; font-size: 15px; }
+  .by b { color: #fff; }
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px; font-weight: 700; text-decoration: none; font-size: 16px; }
+  .btn.primary { background: #fff; color: #1f5b3a; }
+  .btn.ghost { border: 2px solid rgba(255,255,255,.45); color: #fff; }
+  .btn:focus-visible { outline: 3px solid #e8b752; outline-offset: 2px; }
+  .hero img { width: 100%; height: auto; border-radius: 16px; box-shadow: 0 24px 60px -20px rgba(0,0,0,.5); display: block; }
+  section { padding: 64px 0; }
+  section.alt { background: var(--soft); }
+  h2 { font-size: clamp(28px, 4vw, 38px); margin: 0 0 8px; letter-spacing: -.01em; }
+  .lead { color: var(--ink2); margin: 0 0 30px; max-width: 46em; }
+  video { width: 100%; border-radius: 16px; display: block; background: #000; box-shadow: 0 20px 50px -24px rgba(0,0,0,.45); }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .stat b { display: block; font-size: 40px; line-height: 1.1; color: var(--basil); }
+  .stat span { color: var(--ink2); font-size: 15px; }
+  .src { font-size: 13px; color: var(--ink2); margin-top: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .feat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .feat h3 { margin: 0 0 6px; font-size: 18px; }
+  .feat p { margin: 0; color: var(--ink2); font-size: 15px; }
+  .shots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  figure { margin: 0; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 14px; border: 1px solid var(--line); }
+  figcaption { margin-top: 10px; font-weight: 700; }
+  figcaption span { display: block; font-weight: 400; color: var(--ink2); font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--ink2); font-weight: 600; width: 28%; }
+  .tests { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .note { background: var(--mint); border-radius: 14px; padding: 18px 20px; }
+  footer { padding: 36px 0 48px; color: var(--ink2); font-size: 15px; border-top: 1px solid var(--line); }
+  code { background: var(--soft); border: 1px solid var(--line); border-radius: 6px; padding: 1px 6px; font-size: 14px; }
+  @media (max-width: 860px) {
+    .hero .wrap, .shots { grid-template-columns: 1fr; }
+    .grid, .stats { grid-template-columns: 1fr; }
+    .tests { grid-template-columns: repeat(2, 1fr); }
+    header.hero { padding: 44px 0 52px; }
+    section { padding: 48px 0; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Smart Food Inventory &amp; Waste Reduction System</div>
+      <h1>Smart Pantry Manager</h1>
+      <p>Track food batch by batch, get alerts before it expires, cook with what's about to go off, and watch your waste go down — in English, हिन्दी or ಕನ್ನಡ.</p>
+      <div class="btns">
+        <a class="btn primary" href="#demo">▶ Watch the demo</a>
+        <a class="btn ghost" href="https://github.com/pradnyabhosalecs24-byte/Smart-Pantry">View the code</a>
+        <a class="btn ghost" href="Smart_Pantry_Manager_Presentation.pptx" download>Presentation (.pptx)</a>
+      </div>
+      <div class="by">A project by <b>Pradnya Bhosale</b></div>
+    </div>
+    <img src="img/hero.jpg" alt="Smart Pantry 3D pantry shelf with jars, a level badge and a rescue-it reminder" width="600" height="510" />
+  </div>
+</header>
+
+<main>
+<section id="demo">
+  <div class="wrap">
+    <h2>Working demo</h2>
+    <p class="lead">A 1 minute 46 second walkthrough of the running app: sign-up, the 3D shelf, quick add, using stock first-expiry-first-out, the expired-food safeguard, shopping, recipes with a cook-along, analytics, notifications, family sharing, languages and rewards.</p>
+    <video controls preload="metadata" playsinline poster="img/video-poster.jpg">
+      <source src="Smart_Pantry_Demo.mp4" type="video/mp4" />
+      <a href="Smart_Pantry_Demo.mp4">Download the demo video</a>
+    </video>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Why it matters</h2>
+    <p class="lead">Most household waste isn't careless — food is forgotten at the back of the fridge, bought twice, or noticed only after its date.</p>
+    <div class="stats">
+      <div class="stat"><b>1.05 bn tonnes</b><span>of food wasted worldwide in 2022 — 19% of food available to consumers</span></div>
+      <div class="stat"><b>79 kg</b><span>of food wasted per person per year at home, worldwide</span></div>
+      <div class="stat"><b>55 kg</b><span>of food wasted per person per year in Indian homes</span></div>
+    </div>
+    <p class="src">Source: UNEP Food Waste Index Report 2024; India per-capita household figure as reported from the same index.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Features</h2>
+    <p class="lead">Everything in the project brief, plus the things that make it work for a real family.</p>
+    <div class="grid">
+      <div class="feat"><h3>Batch-wise expiry (FEFO)</h3><p>Each purchase keeps its own date; using stock always takes the batch that expires first. Opening a jar moves its expiry earlier.</p></div>
+      <div class="feat"><h3>Quick add by voice or text</h3><p>“2 kg potatoes expiring Friday” fills name, quantity, unit, date, category and storage place. Barcode scan and CSV import too.</p></div>
+      <div class="feat"><h3>Recipes and cook-along</h3><p>39 built-in recipes plus online ones, exact quantities that scale, and an animated, narrated step-by-step player with timers.</p></div>
+      <div class="feat"><h3>Smart shopping list</h3><p>Low-stock items in one click; ticking one off puts it back in the pantry with its new expiry date.</p></div>
+      <div class="feat"><h3>Waste analytics</h3><p>Monthly trends, top wasted items, reasons and real cost, with every chart readable as a table. CSV and PDF export.</p></div>
+      <div class="feat"><h3>Alerts everywhere</h3><p>In-app, daily email and phone push notifications for expiring, expired, low-stock and running-out items — each sent once.</p></div>
+      <div class="feat"><h3>3D shelf and rewards</h3><p>Every jar on the 3D shelf is a real item. Points, levels, streaks, 14 badges and weekly challenges reward wasting less.</p></div>
+      <div class="feat"><h3>Family sharing</h3><p>One pantry for the whole household via an invite code, with editors and view-only members and a log of who did what.</p></div>
+      <div class="feat"><h3>English · हिन्दी · ಕನ್ನಡ</h3><p>The whole interface switches instantly and is remembered per device; item names stay exactly as typed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Screens</h2>
+    <p class="lead">Taken from the running app with its demo data.</p>
+    <div class="shots">
+      <figure><img src="img/dashboard.jpg" alt="Dashboard with 3D shelf, status counts and items to use first" loading="lazy" width="1280" height="720" /><figcaption>Dashboard<span>What to use first, run-out forecast and a live status strip.</span></figcaption></figure>
+      <figure><img src="img/quickadd.jpg" alt="Add item form filled in from a typed sentence" loading="lazy" width="1280" height="720" /><figcaption>Quick add<span>One sentence fills the whole form.</span></figcaption></figure>
+      <figure><img src="img/cook.jpg" alt="Cook-along step showing an animated pan on a stove" loading="lazy" width="1280" height="720" /><figcaption>Cook-along<span>Animated, read aloud, with timers; “I cooked this” updates the pantry.</span></figcaption></figure>
+      <figure><img src="img/analytics.jpg" alt="Analytics charts of food wasted and its cost per month" loading="lazy" width="1280" height="720" /><figcaption>Analytics<span>Waste falling month by month in the sample household.</span></figcaption></figure>
+      <figure><img src="img/rewards.jpg" alt="Rewards page with weekly challenge and earned badges" loading="lazy" width="1280" height="720" /><figcaption>Rewards<span>Earned only from real actions, capped daily.</span></figcaption></figure>
+      <figure><img src="img/kannada.jpg" alt="Dashboard shown in Kannada" loading="lazy" width="1280" height="720" /><figcaption>ಕನ್ನಡ / हिन्दी<span>The same app in Kannada.</span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>How it's built</h2>
+    <p class="lead">A three-tier web app: React client, Node.js REST API, PostgreSQL database.</p>
+    <table>
+      <tr><th>Frontend</th><td>React 19, Vite, TypeScript, Tailwind CSS, Recharts, three.js (React Three Fiber); installable PWA with a service worker</td></tr>
+      <tr><th>Backend</th><td>Node.js, Express 5, Zod validation, scheduled daily reminders, Web Push and email</td></tr>
+      <tr><th>Database</th><td>PostgreSQL 16 with Prisma ORM and versioned migrations; transactions and row locks keep stock correct</td></tr>
+      <tr><th>Security</th><td>bcrypt password hashing, JWT in an httpOnly cookie, CSRF header, rate limits, strict Content Security Policy, every query scoped to the signed-in pantry</td></tr>
+      <tr><th>Deployment</th><td>Vercel or Render (web), Render (API), Neon (database); Docker Compose for a one-command local run</td></tr>
+    </table>
+    <h3 style="margin-top:40px">Tested</h3>
+    <div class="tests">
+      <div class="stat"><b>100</b><span>API and unit tests on a real PostgreSQL database</span></div>
+      <div class="stat"><b>9</b><span>client tests for the quick-add parser</span></div>
+      <div class="stat"><b>8</b><span>browser tests on desktop and phone</span></div>
+      <div class="stat"><b>CI ✓</b><span>GitHub Actions runs everything on every push</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <h2>Run it yourself</h2>
+    <div class="note">
+      <p style="margin:0 0 8px">With Node.js 22 and a free PostgreSQL database (for example Neon):</p>
+      <p style="margin:0"><code>git clone https://github.com/pradnyabhosalecs24-byte/Smart-Pantry</code> → <code>npm run setup</code> → <code>npm run db:migrate</code> → <code>npm run dev</code></p>
+      <p style="margin:8px 0 0">Or with Docker: <code>docker compose up --build</code>, then open <code>http://localhost:8080</code>. Full steps are in the <a href="https://github.com/pradnyabhosalecs24-byte/Smart-Pantry#readme">README</a>.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">Smart Pantry Manager · Pradnya Bhosale · <a href="https://github.com/pradnyabhosalecs24-byte/Smart-Pantry">github.com/pradnyabhosalecs24-byte/Smart-Pantry</a></div>
+</footer>
+</body>
+</html>
