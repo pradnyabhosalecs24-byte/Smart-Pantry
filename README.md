@@ -22,6 +22,11 @@
 
 ---
 
+## Demo video and presentation
+
+- **[Working demo video (1:46)](docs/presentation/Smart_Pantry_Demo.mp4)** — a captioned walkthrough of the running app, from sign-up to rewards
+- **[Project presentation (PowerPoint, 16 slides)](docs/presentation/Smart_Pantry_Manager_Presentation.pptx)** — problem, features, architecture, testing and results, with speaker notes
+
 ## What it does
 
 ### Core (all requirements)
